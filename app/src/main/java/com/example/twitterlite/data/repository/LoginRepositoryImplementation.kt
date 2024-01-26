@@ -19,10 +19,15 @@ class LoginRepositoryImplementation @Inject constructor(
                 val allUsers = data.documents.map {
                     User(it.get("email").toString(), it.get("password").toString())
                 }
-
-                Resource.Success(user in allUsers)
+                val isLoggedIn = user in allUsers
+                if(isLoggedIn){
+                    Resource.Success(true)
+                }else{
+                    Resource.Error("Wrong username or password",false)
+                }
             } catch (e: Exception) {
-                Resource.Success(false)
+                Resource.Error(e.message?:"Something went wrong",false)
+
             }
         }
 }

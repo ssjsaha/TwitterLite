@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.twitterlite.presentation.viewmodel.LoginViewModel
 import com.example.twitterlite.presentation.ui.LoginPage
+import com.example.twitterlite.presentation.ui.Navigation
 import com.example.twitterlite.presentation.ui.theme.TwitterLiteTheme
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,7 +28,6 @@ class MainActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.tryLogin()
         setContent {
             TwitterLiteTheme {
                 // A surface container using the 'background' color from the theme
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginPage()
+                    Navigation()
                 }
             }
         }
