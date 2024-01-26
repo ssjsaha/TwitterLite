@@ -35,8 +35,7 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
                     _loginStateFlow.value = _loginStateFlow.value.copy(
                         isLoggedIn = false,
                         isLoading = false,
-                        error = res.message
-
+                        error = res.message ?: "Something went wrong"
                     )
                 }
 
@@ -44,7 +43,7 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
                     _loginStateFlow.value = _loginStateFlow.value.copy(
                         isLoggedIn = false,
                         isLoading = false,
-                        error = res.errorResponse?.message
+                        error = res.errorResponse?.message ?: "Something went wrong"
                     )
                 }
 

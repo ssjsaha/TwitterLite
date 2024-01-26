@@ -39,6 +39,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.twitterlite.R
 import com.example.twitterlite.domain.model.User
 import kotlinx.coroutines.flow.StateFlow
@@ -49,7 +51,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginPage(
     onEvent: (LoginPageEvent) -> Unit,
-    state: StateFlow<LoginState>
+    state: StateFlow<LoginState>,
+    navController: NavController
 ) {
     val loginState = state.collectAsState()
     var email by remember { mutableStateOf("") }
@@ -176,13 +179,18 @@ fun LoginPage(
                     scope.launch {
                         snackbarHostState.showSnackbar(text)
                     }
+                    val a = navController
+                    navController.navigate("home") {
+                        popUpTo("auth") {
+                            inclusive = true
+                        }
+                    }
                 }
             }else if(loginState.value.error.isNotEmpty()){
                 LaunchedEffect(key1 = loginState.value.error) {
                     scope.launch {
                         snackbarHostState.showSnackbar(loginState.value.error)
                         loginState.value.error = ""
-
                     }
                 }
             }

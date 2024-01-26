@@ -19,7 +19,15 @@ fun Navigation() {
                 composable(route = "login") {
                     val viewModel =
                         it.sharedViewModel<LoginViewModel>(navController = navController)
-                    LoginPage(viewModel::onEvent, viewModel.loginStateFlow)
+                    LoginPage(viewModel::onEvent, viewModel.loginStateFlow, navController)
+                }
+            }
+            navigation(
+                startDestination = "main",
+                route = "home"
+            ){
+                composable(route = "main"){
+                    HomePage()
                 }
             }
         }
