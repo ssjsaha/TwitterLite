@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TwitterLite</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Login</string>
+    <string name="login_success_message">Logged In Successfully</string>
 </resources>

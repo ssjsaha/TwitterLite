@@ -1,4 +1,4 @@
-package com.example.twitterlite.ui.theme
+package com.example.twitterlite.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

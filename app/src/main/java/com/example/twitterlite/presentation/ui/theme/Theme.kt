@@ -1,4 +1,4 @@
-package com.example.twitterlite.ui.theme
+package com.example.twitterlite.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "887796881797",
+    "project_id": "twitterlite-5080b",
+    "storage_bucket": "twitterlite-5080b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:887796881797:android:010392d15e975f7a698cec",
+        "android_client_info": {
+          "package_name": "com.example.twitterlite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA02_gZZgLBz10LUI2xq3Aw_S_HdMW2cyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
