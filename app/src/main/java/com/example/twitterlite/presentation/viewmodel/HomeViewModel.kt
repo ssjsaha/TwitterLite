@@ -26,7 +26,6 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
     private var _homeStateFlow: MutableStateFlow<HomeState> = MutableStateFlow(
         HomeState()
     )
-    private var _createFile: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val homeStateFlow = _homeStateFlow.asStateFlow()
 
     fun onEvent(event: HomePageEvent) {
