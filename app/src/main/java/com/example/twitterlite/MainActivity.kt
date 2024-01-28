@@ -40,33 +40,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    fun test(){
-        val db = Firebase.firestore
 
-        db.collection("users")
-            .get()
-            .addOnSuccessListener {
-                val a = it.documents.get(0).get("email")
-                val b = a
-            }
-            .addOnFailureListener{
-                val a = it
-            }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TwitterLiteTheme {
-        Greeting("Android")
-    }
 }

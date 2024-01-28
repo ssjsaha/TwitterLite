@@ -46,10 +46,6 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
                         error = res.errorResponse?.message ?: "Something went wrong"
                     )
                 }
-
-                is Resource.Loading -> {
-
-                }
             }
         }
     }

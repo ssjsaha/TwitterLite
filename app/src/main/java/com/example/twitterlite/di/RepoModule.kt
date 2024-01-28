@@ -1,6 +1,8 @@
 package com.example.twitterlite.di
 
+import com.example.twitterlite.data.repository.HomeRepositoryImplementation
 import com.example.twitterlite.data.repository.LoginRepositoryImplementation
+import com.example.twitterlite.domain.repository.HomeRepository
 import com.example.twitterlite.domain.repository.LoginRepository
 import dagger.Binds
 import dagger.Module
@@ -16,4 +18,10 @@ abstract class RepoModule {
     abstract fun bindLoginRepository(
         loginRepositoryImpl: LoginRepositoryImplementation
     ): LoginRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindHomeRepository(
+        homeRepositoryImpl: HomeRepositoryImplementation
+    ): HomeRepository
 }

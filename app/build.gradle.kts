@@ -40,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.1"
@@ -75,6 +76,10 @@ dependencies {
     //firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-firestore")
+
+
+    //coil for image loading
+    implementation("io.coil-kt:coil-compose:1.4.0")
 
 
     testImplementation("junit:junit:4.13.2")
