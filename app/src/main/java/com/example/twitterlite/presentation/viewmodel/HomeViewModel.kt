@@ -32,8 +32,8 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
 
     fun onEvent(event: HomePageEvent) {
         when (event) {
-            is HomePageEvent.UploadFile -> {
-                uploadFile(event.file)
+            is HomePageEvent.UploadPost -> {
+                uploadFile(event.file, event.text, event.userName)
             }
         }
     }
@@ -42,11 +42,12 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
         getAllPosts()
     }
 
-    fun uploadFile(file: File?) {
+    fun uploadFile(file: File?, text: String, userName: String) {
         file?.let {
             val imageStr = encodeImage(it)
             viewModelScope.launch {
-                repo.uploadPost(Post("this is a post", imageStr, "ssjsaha@gmail.com"))
+                text
+                repo.uploadPost(Post(text, imageStr, userName))
             }
         }
     }
@@ -82,6 +83,7 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
     }
 
     private fun encodeImage(file: File): String? {
+        val a = file.path
         val bm = BitmapFactory.decodeFile(file.path)
         val byteInputStr = ByteArrayOutputStream()
         bm.compress(Bitmap.CompressFormat.JPEG, 50, byteInputStr)

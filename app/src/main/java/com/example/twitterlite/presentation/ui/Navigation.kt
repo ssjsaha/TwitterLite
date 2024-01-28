@@ -39,7 +39,7 @@ fun Navigation() {
                 composable(route = "post") {
                     val viewModel =
                         it.sharedViewModel<HomeViewModel>(navController = navController)
-                    AddPostPage(navController)
+                    AddPostPage(viewModel::onEvent,navController)
                 }
             }
         }

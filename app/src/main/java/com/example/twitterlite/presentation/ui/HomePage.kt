@@ -51,7 +51,6 @@ fun HomePage(
         Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", file
     )
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-        onEvent.invoke(HomePageEvent.UploadFile(file))
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(

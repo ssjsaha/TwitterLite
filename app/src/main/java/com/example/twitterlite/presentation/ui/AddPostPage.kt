@@ -1,12 +1,19 @@
-
+import android.Manifest
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,25 +24,60 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.NavController
+import com.example.twitterlite.BuildConfig
 import com.example.twitterlite.R
+import com.example.twitterlite.presentation.ui.HomePageEvent
+import com.example.twitterlite.presentation.ui.createImageFile
+import java.io.File
+import java.util.Objects
 
 @Composable
 @ExperimentalMaterial3Api
 
-fun AddPostPage(navController: NavController) {
-    // You can implement your custom image picking logic here
-    // For simplicity, I'm using a placeholder image
-    val placeholderImage = painterResource(id = R.drawable.ic_launcher_foreground)
-
-    var selectedImage by remember { mutableStateOf<String?>(null) }
+fun AddPostPage(onEvent: (HomePageEvent) -> Unit, navController: NavController) {
+    val context = LocalContext.current
+    var isCameraPermissionGranted by remember {
+        mutableStateOf(false)
+    }
+    var text by remember {
+        mutableStateOf("")
+    }
     val dispatcherOwner = LocalOnBackPressedDispatcherOwner.current
     val dispatcher = dispatcherOwner?.onBackPressedDispatcher
+
+    val file = context.createImageFile()
+    var filePath by remember { mutableStateOf<String?>(null) }
+    val uri = FileProvider.getUriForFile(
+        Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", file
+    )
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+        if (file.length() != 0L) {
+            filePath = file.path
+        }
+    }
+
+
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            isCameraPermissionGranted = isGranted
+            if (isGranted) {
+                cameraLauncher.launch(uri)
+            } else {
+                Toast.makeText(context, "You need to give camera permission", Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
 
     // Handle the back button press to navigate back to the "home" composable
     DisposableEffect(dispatcher) {
@@ -57,30 +99,56 @@ fun AddPostPage(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Display selected image or placeholder
-        Image(
-            painter = if (selectedImage != null) {
-                painterResource(id = R.drawable.ic_launcher_foreground) // Use your logic to load the selected image
-            } else {
-                placeholderImage
-            },
-            contentDescription = "Selected Image",
-            modifier = Modifier
-                .size(120.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colorScheme.background)
-                .clickable {
-                    // You can implement your image picking logic here
-                    // For simplicity, I'm just updating the selected image with a placeholder
-                    selectedImage = "your_image_path_or_base64_string_here"
-                }
-        )
+        if (filePath != null) {
+            Image(
+                bitmap = BitmapFactory.decodeFile(filePath).asImageBitmap(),
+                contentDescription = "Selected Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(30.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color.LightGray)
+                    .clickable {
+                        val permissionCheckResult =
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                            cameraLauncher.launch(uri)
+                        } else {
+                            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    }
+            )
+        } else {
+            Image(
+                imageVector = Icons.Outlined.Add,
+                contentDescription = "Selected Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(30.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color.Gray)
+                    .clickable {
+                        val permissionCheckResult =
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                            cameraLauncher.launch(uri)
+                        } else {
+                            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    }
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Text field for adding text
         OutlinedTextField(
-            value = "",
-            onValueChange = { /* Handle text change */ },
+            value = text,
+            onValueChange = {
+                text = it
+            },
             label = { Text("Add Text") },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Text,
@@ -88,25 +156,36 @@ fun AddPostPage(navController: NavController) {
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    // Handle text input done
+
                 }
             ),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Button to confirm and close the bottom sheet
         Button(
             onClick = {
-                // Handle the selected image and text
-                // Close the bottom sheet
+                if (text.isBlank()) {
+                    Toast.makeText(context, "Please add some text", Toast.LENGTH_LONG).show()
+                    return@Button
+                }
+                if (filePath != null) {
+                    onEvent.invoke(
+                        HomePageEvent.UploadPost(
+                            File(filePath!!),
+                            text,
+                            "ssjsaha@gmail.com"
+                        )
+                    )
+                } else {
+                    onEvent.invoke(HomePageEvent.UploadPost(null, text, "ssjsaha@gmail.com"))
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
         ) {
-            Text("Add")
+            Text("Upload")
         }
     }
 }
