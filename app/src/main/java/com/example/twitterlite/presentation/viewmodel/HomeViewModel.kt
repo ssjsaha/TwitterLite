@@ -27,7 +27,6 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
         HomeState()
     )
     private var _createFile: MutableSharedFlow<Boolean> = MutableSharedFlow()
-    val createFile = _createFile.asSharedFlow()
     val homeStateFlow = _homeStateFlow.asStateFlow()
 
     fun onEvent(event: HomePageEvent) {
@@ -46,7 +45,6 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
         file?.let {
             val imageStr = encodeImage(it)
             viewModelScope.launch {
-                text
                 repo.uploadPost(Post(text, imageStr, userName))
             }
         }

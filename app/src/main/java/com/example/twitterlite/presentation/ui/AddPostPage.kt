@@ -177,8 +177,13 @@ fun AddPostPage(onEvent: (HomePageEvent) -> Unit, navController: NavController) 
                             "ssjsaha@gmail.com"
                         )
                     )
+                    navController.popBackStack("main", inclusive = false)
+                    Toast.makeText(context,"Your post will be shared soon",Toast.LENGTH_LONG).show()
                 } else {
                     onEvent.invoke(HomePageEvent.UploadPost(null, text, "ssjsaha@gmail.com"))
+                    navController.popBackStack("main", inclusive = false)
+                    Toast.makeText(context,"Your post will be shared soon",Toast.LENGTH_LONG).show()
+
                 }
             },
             modifier = Modifier
