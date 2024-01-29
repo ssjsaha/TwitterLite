@@ -1,6 +1,7 @@
 package com.example.twitterlite.presentation.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -36,11 +38,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.twitterlite.R
 import com.example.twitterlite.domain.model.User
 import kotlinx.coroutines.flow.StateFlow
@@ -50,9 +53,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPage(
-    onEvent: (LoginPageEvent) -> Unit,
-    state: StateFlow<LoginState>,
-    navController: NavController
+    onEvent: (LoginPageEvent) -> Unit, state: StateFlow<LoginState>, navController: NavController
 ) {
     val loginState = state.collectAsState()
     var email by remember { mutableStateOf("") }
@@ -65,10 +66,8 @@ fun LoginPage(
         mutableStateOf(false)
     }
     val scope = rememberCoroutineScope()
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) {
+    Scaffold(modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -139,19 +138,19 @@ fun LoginPage(
             // Login Button
             Button(
                 onClick = {
-                    if(email.isBlank()){
+                    if (email.isBlank()) {
                         emailError = true
                         passwordError = false
                         scope.launch {
                             snackbarHostState.showSnackbar("Please enter a email")
                         }
-                    }else if(password.isBlank()){
+                    } else if (password.isBlank()) {
                         emailError = false
                         passwordError = true
                         scope.launch {
                             snackbarHostState.showSnackbar("Please enter a password")
                         }
-                    }else{
+                    } else {
                         emailError = false
                         passwordError = false
                         onEvent.invoke(LoginPageEvent.AttemptLogin(User(email, password)))
@@ -169,8 +168,25 @@ fun LoginPage(
                     Text(text = stringResource(id = R.string.login_button))
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                text = "Or"
+            )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedButton(modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+
+                onClick = { /*TODO*/ }) {
+                Text(text = stringResource(id = R.string.signup_button))
+            }
 
             // Demo: Display a message when the login is successful
             if (loginState.value.isLoggedIn && loginState.value.error.isEmpty()) {
@@ -186,7 +202,7 @@ fun LoginPage(
                         }
                     }
                 }
-            }else if(loginState.value.error.isNotEmpty()){
+            } else if (loginState.value.error.isNotEmpty()) {
                 LaunchedEffect(key1 = loginState.value.error) {
                     scope.launch {
                         snackbarHostState.showSnackbar(loginState.value.error)
