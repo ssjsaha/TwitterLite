@@ -64,10 +64,6 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
                 is Resource.Error -> {
 
                 }
-
-                is Resource.ErrorResponse -> {
-
-                }
             }
         }
     }

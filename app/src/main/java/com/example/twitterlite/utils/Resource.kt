@@ -4,5 +4,4 @@ package com.example.twitterlite.utils
 
     class Success<T>(data: T?) : Resource<T>(data)
     class Error<T>(message: String, data: T? = null) : Resource<T>(data, message)
-    class ErrorResponse<T>(errorResponse: ErrorData?): Resource<T>(errorResponse = errorResponse)
 }

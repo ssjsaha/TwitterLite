@@ -5,5 +5,6 @@ import com.example.twitterlite.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface LoginRepository {
-    suspend fun isLoginSuccess(user:User): Resource<Boolean>
+    suspend fun isLoginSuccess(user: User): Resource<Boolean>
+    suspend fun isSignupSuccess(user: User): Resource<Boolean>
 }

@@ -26,6 +26,11 @@ fun Navigation() {
                         it.sharedViewModel<LoginViewModel>(navController = navController)
                     LoginPage(viewModel::onEvent, viewModel.loginStateFlow, navController)
                 }
+                composable(route = "signup") {
+                    val viewModel =
+                        it.sharedViewModel<LoginViewModel>(navController = navController)
+                    SignupPage(viewModel::onEvent, viewModel.loginStateFlow, navController)
+                }
             }
             navigation(
                 startDestination = "main",

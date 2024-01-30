@@ -38,14 +38,29 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
                         error = res.message ?: "Something went wrong"
                     )
                 }
+            }
+        }
+    }
 
-                is Resource.ErrorResponse -> {
+    fun trySignup(user: User) {
+        viewModelScope.launch {
+            val res = repository.isSignupSuccess(user)
+            when (res) {
+                is Resource.Success -> {
+                    _loginStateFlow.value = _loginStateFlow.value.copy(
+                        isLoggedIn = true,
+                        isLoading = false
+                    )
+                }
+
+                is Resource.Error -> {
                     _loginStateFlow.value = _loginStateFlow.value.copy(
                         isLoggedIn = false,
                         isLoading = false,
-                        error = res.errorResponse?.message ?: "Something went wrong"
+                        error = res.message ?: "Something went wrong"
                     )
                 }
+
             }
         }
     }
@@ -59,8 +74,11 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
                 tryLogin(event.user)
             }
 
-            is LoginPageEvent.NavigateToSignUp -> {
-
+            is LoginPageEvent.AttemptSignup -> {
+                _loginStateFlow.value = _loginStateFlow.value.copy(
+                    isLoading = true
+                )
+                trySignup(user = event.user)
             }
         }
     }

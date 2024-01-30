@@ -1,7 +1,6 @@
 package com.example.twitterlite.presentation.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,15 +51,13 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(
+fun SignupPage(
     onEvent: (LoginPageEvent) -> Unit, state: StateFlow<LoginState>, navController: NavController
 ) {
     val loginState = state.collectAsState()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
-    var isEnabled by remember { mutableStateOf(true) }
-
     var emailError by remember {
         mutableStateOf(false)
     }
@@ -137,9 +134,7 @@ fun LoginPage(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Login Button
             Button(
-                enabled = isEnabled,
                 onClick = {
                     if (email.isBlank()) {
                         emailError = true
@@ -156,21 +151,19 @@ fun LoginPage(
                     } else {
                         emailError = false
                         passwordError = false
-                        onEvent.invoke(LoginPageEvent.AttemptLogin(User(email, password)))
+                        onEvent.invoke(LoginPageEvent.AttemptSignup(User(email, password)))
                     }
                 }, modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
             ) {
                 if (loginState.value.isLoading) {
-                    isEnabled = false
                     CircularProgressIndicator(
                         color = colorResource(id = R.color.purple_500),
                         modifier = Modifier.size(24.dp)
                     )
                 } else {
-                    isEnabled = true
-                    Text(text = stringResource(id = R.string.login_button))
+                    Text(text = stringResource(id = R.string.signup_button))
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -188,11 +181,11 @@ fun LoginPage(
             OutlinedButton(modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-                enabled = isEnabled,
+
                 onClick = {
-                    navController.navigate("signup")
+                    navController.navigate("login")
                 }) {
-                Text(text = stringResource(id = R.string.signup_button))
+                Text(text = stringResource(id = R.string.login_button))
             }
 
             // Demo: Display a message when the login is successful
@@ -202,7 +195,6 @@ fun LoginPage(
                     scope.launch {
                         snackbarHostState.showSnackbar(text)
                     }
-                    val a = navController
                     navController.navigate("home") {
                         popUpTo("auth") {
                             inclusive = true

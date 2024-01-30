@@ -20,14 +20,38 @@ class LoginRepositoryImplementation @Inject constructor(
                     User(it.get("email").toString(), it.get("password").toString())
                 }
                 val isLoggedIn = user in allUsers
-                if(isLoggedIn){
+                if (isLoggedIn) {
                     Resource.Success(true)
-                }else{
-                    Resource.Error("Wrong username or password",false)
+                } else {
+                    Resource.Error("Wrong username or password", false)
                 }
             } catch (e: Exception) {
-                Resource.Error(e.message?:"Something went wrong",false)
+                Resource.Error(e.message ?: "Something went wrong", false)
+            }
+        }
 
+    override suspend fun isSignupSuccess(user: User): Resource<Boolean> =
+        withContext(Dispatchers.IO) {
+            try {
+                val data = hashMapOf(
+                    "email" to user.email,
+                    "password" to user.password,
+                )
+                val loginData = fireStoreDb.collection("users").get().await()
+                val allUserName = loginData.documents.map {
+                    it.get("email").toString().trim()
+                }
+                val isExistingUser = user.email.trim() in allUserName
+                if (isExistingUser) {
+                    Resource.Error("User already exists! Please try login", false)
+                }else {
+                    fireStoreDb.collection("users")
+                        .add(data)
+                        .await()
+                    Resource.Success(true)
+                }
+            } catch (e: Exception) {
+                Resource.Error(e.message ?: "Something went wrong", false)
             }
         }
 }
