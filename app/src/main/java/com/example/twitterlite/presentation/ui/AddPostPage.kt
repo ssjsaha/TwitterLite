@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.ui.res.painterResource
@@ -35,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.twitterlite.BuildConfig
 import com.example.twitterlite.R
 import com.example.twitterlite.presentation.ui.HomePageEvent
@@ -100,7 +103,29 @@ fun AddPostPage(onEvent: (HomePageEvent) -> Unit, navController: NavController) 
     ) {
         // Display selected image or placeholder
         if (filePath != null) {
-            Image(
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(filePath)
+                .build(),
+            contentDescription = "icon",
+            contentScale = ContentScale.Inside,
+            modifier =  Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(30.dp)
+                .clip(MaterialTheme.shapes.medium)
+                .background(Color.LightGray)
+                .clickable {
+                    val permissionCheckResult =
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                        cameraLauncher.launch(uri)
+                    } else {
+                        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                }
+            )
+/*            Image(
                 bitmap = BitmapFactory.decodeFile(filePath).asImageBitmap(),
                 contentDescription = "Selected Image",
                 modifier = Modifier
@@ -118,7 +143,7 @@ fun AddPostPage(onEvent: (HomePageEvent) -> Unit, navController: NavController) 
                             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
                         }
                     }
-            )
+            )*/
         } else {
             Image(
                 imageVector = Icons.Outlined.Add,
