@@ -5,5 +5,6 @@ import com.example.twitterlite.presentation.ui.model.PostUI
 import java.io.File
 
 data class HomeState(
-    var posts: List<PostUI> = listOf()
+    var posts: List<PostUI> = listOf(),
+    var error: String? = null
 )

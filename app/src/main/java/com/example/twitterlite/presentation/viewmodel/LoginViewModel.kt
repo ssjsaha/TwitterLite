@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.VisibleForTesting
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,6 +21,8 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
         LoginState()
     )
     val loginStateFlow = _loginStateFlow.asStateFlow()
+
+    @VisibleForTesting
     fun tryLogin(user: User) {
         viewModelScope.launch {
             val res = repository.isLoginSuccess(user)
@@ -42,6 +45,7 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
         }
     }
 
+    @VisibleForTesting
     fun trySignup(user: User) {
         viewModelScope.launch {
             val res = repository.isSignupSuccess(user)

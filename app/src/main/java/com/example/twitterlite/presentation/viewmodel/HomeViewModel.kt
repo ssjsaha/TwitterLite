@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.VisibleForTesting
 import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
@@ -40,6 +41,7 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
         getAllPosts()
     }
 
+    @VisibleForTesting
     fun uploadFile(file: File?, text: String, userName: String) {
         file?.let {
             val imageStr = encodeImage(it)
@@ -49,6 +51,7 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
         }
     }
 
+    @VisibleForTesting
     fun getAllPosts() {
         viewModelScope.launch {
             val res = repo.getAllPosts()
@@ -62,13 +65,17 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
                 }
 
                 is Resource.Error -> {
-
+                    _homeStateFlow.value = _homeStateFlow.value.copy(
+                        error = res.message
+                    )
                 }
             }
         }
     }
 
-    private fun mapPostUI(list: List<Post>): List<PostUI> {
+
+    @VisibleForTesting
+    fun mapPostUI(list: List<Post>): List<PostUI> {
         val listPostUI = list.map {
             PostUI(it.text, decodeImage(it.image), it.userName)
         }
@@ -76,7 +83,6 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
     }
 
     private fun encodeImage(file: File): String? {
-        val a = file.path
         val bm = BitmapFactory.decodeFile(file.path)
         val byteInputStr = ByteArrayOutputStream()
         bm.compress(Bitmap.CompressFormat.JPEG, 50, byteInputStr)
@@ -85,7 +91,11 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
     }
 
     private fun decodeImage(base64: String?): Bitmap? {
-        val decodedString: ByteArray = Base64.decode(base64, Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+        return try {
+            val decodedString: ByteArray = Base64.decode(base64, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

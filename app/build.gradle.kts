@@ -83,6 +83,19 @@ dependencies {
 
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation ("app.cash.turbine:turbine:0.7.0")
+    testImplementation ("com.google.truth:truth:1.1.3")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
+
+    testImplementation ("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    testImplementation ("org.mockito:mockito-core:4.6.1")
+    testImplementation ("org.mockito:mockito-inline:4.6.1")
+    testImplementation ("io.mockk:mockk:1.12.2")
+    testImplementation ("com.google.truth:truth:1.1.3")
+    testImplementation ("org.jetbrains.kotlin:kotlin-test-junit:1.7.10")
+
+
+
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))

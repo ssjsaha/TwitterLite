@@ -5,5 +5,7 @@
     <string name="login_button">Login</string>
     <string name="signup_button">Signup</string>
     <string name="login_success_message">Logged In Successfully</string>
+    <string name="signup_success_message">Signed up and Logged In Successfully</string>
+
     <string name="user">User</string>
 </resources>
