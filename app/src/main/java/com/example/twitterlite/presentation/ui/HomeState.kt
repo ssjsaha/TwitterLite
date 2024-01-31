@@ -6,5 +6,6 @@ import java.io.File
 
 data class HomeState(
     var posts: List<PostUI> = listOf(),
-    var error: String? = null
+    var error: String? = null,
+    var loading: Boolean = false
 )

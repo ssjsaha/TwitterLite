@@ -12,9 +12,8 @@ import com.example.twitterlite.presentation.ui.HomeState
 import com.example.twitterlite.presentation.ui.model.PostUI
 import com.example.twitterlite.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
@@ -38,6 +37,9 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
     }
 
     init {
+        _homeStateFlow.value = _homeStateFlow.value.copy(
+            loading = true
+        )
         getAllPosts()
     }
 
@@ -59,14 +61,16 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
                 is Resource.Success -> {
                     res.data?.let {
                         _homeStateFlow.value = _homeStateFlow.value.copy(
-                            posts = mapPostUI(it)
+                            posts = mapPostUI(it),
+                            loading = false
                         )
                     }
                 }
 
                 is Resource.Error -> {
                     _homeStateFlow.value = _homeStateFlow.value.copy(
-                        error = res.message
+                        error = res.message,
+                        loading = false
                     )
                 }
             }
