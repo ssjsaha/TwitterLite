@@ -7,6 +7,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.twitterlite.domain.model.Post
 import com.example.twitterlite.domain.repository.HomeRepository
 import com.example.twitterlite.utils.Constants
+import com.example.twitterlite.utils.Constants.description
+import com.example.twitterlite.utils.Constants.image
+import com.example.twitterlite.utils.Constants.posts
+import com.example.twitterlite.utils.Constants.username
 import com.example.twitterlite.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -28,17 +32,13 @@ class HomeRepositoryImplementation @Inject constructor(
             }
             val userName = flowEmail.first()
             val data = hashMapOf(
-                "description" to post.text,
-                "image" to post.image,
-                "username" to userName
+                description to post.text,
+                image to post.image,
+                username to userName
             )
-            fireStoreDb.collection("posts")
+            fireStoreDb.collection(posts)
                 .add(data)
-                .addOnCompleteListener {
-                    val a = it.result.get()
-                }.addOnFailureListener {
-                    val a = it.message
-                }
+                .await()
             Resource.Success(true)
         } catch (e: Exception) {
             Resource.Error("Couldn't upload your post", false)
@@ -47,12 +47,12 @@ class HomeRepositoryImplementation @Inject constructor(
 
     override suspend fun getAllPosts(): Resource<List<Post>> = withContext(Dispatchers.IO) {
         try {
-            val allPosts = fireStoreDb.collection("posts").get().await()
+            val allPosts = fireStoreDb.collection(posts).get().await()
             Resource.Success(allPosts.documents.map {
                 Post(
-                    it.get("description").toString(),
-                    it.get("image").toString(),
-                    it.get("username").toString()
+                    it.get(description).toString(),
+                    it.get(image).toString(),
+                    it.get(username).toString()
                 )
             })
         } catch (e: Exception) {

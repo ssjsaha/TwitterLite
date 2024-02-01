@@ -7,6 +7,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.twitterlite.domain.model.User
 import com.example.twitterlite.domain.repository.LoginRepository
 import com.example.twitterlite.utils.Constants
+import com.example.twitterlite.utils.Constants.email
+import com.example.twitterlite.utils.Constants.password
+import com.example.twitterlite.utils.Constants.users
 import com.example.twitterlite.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +28,9 @@ class LoginRepositoryImplementation @Inject constructor(
     override suspend fun isLoginSuccess(user: User): Resource<Boolean> =
         withContext(Dispatchers.IO) {
             try {
-                val data = fireStoreDb.collection("users").get().await()
+                val data = fireStoreDb.collection(users).get().await()
                 val allUsers = data.documents.map {
-                    User(it.get("email").toString(), it.get("password").toString())
+                    User(it.get(email).toString(), it.get(password).toString())
                 }
                 val isLoggedIn = user in allUsers
                 if (isLoggedIn) {
@@ -44,18 +47,18 @@ class LoginRepositoryImplementation @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 val data = hashMapOf(
-                    "email" to user.email,
-                    "password" to user.password,
+                    email to user.email,
+                    password to user.password,
                 )
-                val loginData = fireStoreDb.collection("users").get().await()
+                val loginData = fireStoreDb.collection(users).get().await()
                 val allUserName = loginData.documents.map {
-                    it.get("email").toString().trim()
+                    it.get(email).toString().trim()
                 }
                 val isExistingUser = user.email.trim() in allUserName
                 if (isExistingUser) {
                     Resource.Error("User already exists! Please try login", false)
                 } else {
-                    fireStoreDb.collection("users")
+                    fireStoreDb.collection(users)
                         .add(data)
                         .await()
                     Resource.Success(true)
