@@ -76,6 +76,7 @@ dependencies {
     //firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-firestore")
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.0")
 
 
     //coil for image loading

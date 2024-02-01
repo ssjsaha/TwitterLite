@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +40,8 @@ import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import com.example.twitterlite.BuildConfig
 import com.example.twitterlite.presentation.ui.model.PostUI
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Objects
 
@@ -50,6 +53,7 @@ fun HomePage(
     navController: NavController
 ) {
     val homeState = state.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = homeState.value.refreshing)
     if (homeState.value.logout) {
         LaunchedEffect(key1 = true) {
             navController.navigate("auth") {
@@ -57,24 +61,6 @@ fun HomePage(
                     inclusive = true
                 }
             }
-        }
-    }
-    val context = LocalContext.current
-    val file = context.createImageFile()
-    val uri = FileProvider.getUriForFile(
-        Objects.requireNonNull(context), BuildConfig.APPLICATION_ID + ".provider", file
-    )
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) {
-        if (it) {
-            Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
-            cameraLauncher.launch(uri)
-        } else {
-            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
         }
     }
     Scaffold(
@@ -116,15 +102,17 @@ fun HomePage(
             Column(
                 modifier = Modifier.padding(it)
             ) {
-                val posts = homeState.value.posts
-                if (posts.isNotEmpty()) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        items(posts.size) { it ->
-                            SinglePost(PostUI(posts[it].text, posts[it].image, posts[it].userName))
-                        }
+                SwipeRefresh(state = swipeRefreshState, onRefresh = { onEvent.invoke(HomePageEvent.GetAllPost) }) {
+                    val posts = homeState.value.posts
+                    if (posts.isNotEmpty()) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            items(posts.size) { it ->
+                                SinglePost(PostUI(posts[it].text, posts[it].image, posts[it].userName))
+                            }
 
+                        }
                     }
                 }
             }

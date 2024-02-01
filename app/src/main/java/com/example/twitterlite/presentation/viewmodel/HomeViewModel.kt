@@ -32,6 +32,7 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
             is HomePageEvent.UploadPost -> {
                 uploadFile(event.file, event.text, event.userName)
             }
+
             is HomePageEvent.Logout -> {
                 viewModelScope.launch {
                     val logoutVal = repo.logout()
@@ -39,6 +40,10 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
                         logout = logoutVal
                     )
                 }
+            }
+
+            is HomePageEvent.GetAllPost -> {
+                getAllPosts(isRefreshing = true)
             }
         }
     }
@@ -65,7 +70,10 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
     }
 
     @VisibleForTesting
-    fun getAllPosts() {
+    fun getAllPosts(isRefreshing: Boolean = false) {
+        _homeStateFlow.value = _homeStateFlow.value.copy(
+            refreshing = isRefreshing
+        )
         viewModelScope.launch {
             val res = repo.getAllPosts()
             when (res) {
@@ -73,7 +81,8 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
                     res.data?.let {
                         _homeStateFlow.value = _homeStateFlow.value.copy(
                             posts = mapPostUI(it),
-                            loading = false
+                            loading = false,
+                            refreshing = false
                         )
                     }
                 }
@@ -81,7 +90,8 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
                 is Resource.Error -> {
                     _homeStateFlow.value = _homeStateFlow.value.copy(
                         error = res.message,
-                        loading = false
+                        loading = false,
+                        refreshing = false
                     )
                 }
             }
