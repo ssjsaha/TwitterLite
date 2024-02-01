@@ -23,11 +23,14 @@ fun Navigation() {
             composable(route = "login") {
                 val viewModel =
                     it.sharedViewModel<LoginViewModel>(navController = navController)
+                viewModel.isAlreadyLoggedIn()
                 LoginPage(viewModel::onEvent, viewModel.loginStateFlow, navController)
             }
             composable(route = "signup") {
                 val viewModel =
                     it.sharedViewModel<LoginViewModel>(navController = navController)
+                viewModel.isAlreadyLoggedIn()
+
                 SignupPage(viewModel::onEvent, viewModel.loginStateFlow, navController)
             }
         }

@@ -22,10 +22,6 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
     )
     val loginStateFlow = _loginStateFlow.asStateFlow()
 
-    init {
-        isAlreadyLoggedIn()
-    }
-
     @VisibleForTesting
     fun tryLogin(user: User) {
         viewModelScope.launch {
@@ -73,7 +69,7 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
         }
     }
 
-    private fun isAlreadyLoggedIn() {
+    fun isAlreadyLoggedIn() {
         viewModelScope.launch {
             repository.isLoginNeeded().collect {
                 _loginStateFlow.value = _loginStateFlow.value.copy(
