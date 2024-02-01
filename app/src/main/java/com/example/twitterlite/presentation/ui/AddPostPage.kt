@@ -125,25 +125,6 @@ fun AddPostPage(onEvent: (HomePageEvent) -> Unit, navController: NavController) 
                     }
                 }
             )
-/*            Image(
-                bitmap = BitmapFactory.decodeFile(filePath).asImageBitmap(),
-                contentDescription = "Selected Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(30.dp)
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(Color.LightGray)
-                    .clickable {
-                        val permissionCheckResult =
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                            cameraLauncher.launch(uri)
-                        } else {
-                            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-                        }
-                    }
-            )*/
         } else {
             Image(
                 imageVector = Icons.Outlined.Add,
@@ -199,13 +180,12 @@ fun AddPostPage(onEvent: (HomePageEvent) -> Unit, navController: NavController) 
                         HomePageEvent.UploadPost(
                             File(filePath!!),
                             text,
-                            "ssjsaha@gmail.com"
                         )
                     )
                     navController.popBackStack("main", inclusive = false)
                     Toast.makeText(context,"Your post will be shared soon",Toast.LENGTH_LONG).show()
                 } else {
-                    onEvent.invoke(HomePageEvent.UploadPost(null, text, "ssjsaha@gmail.com"))
+                    onEvent.invoke(HomePageEvent.UploadPost(null, text))
                     navController.popBackStack("main", inclusive = false)
                     Toast.makeText(context,"Your post will be shared soon",Toast.LENGTH_LONG).show()
 

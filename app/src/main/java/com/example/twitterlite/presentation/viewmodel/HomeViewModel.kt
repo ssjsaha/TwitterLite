@@ -12,7 +12,6 @@ import com.example.twitterlite.presentation.ui.HomeState
 import com.example.twitterlite.presentation.ui.model.PostUI
 import com.example.twitterlite.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -33,6 +32,14 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
             is HomePageEvent.UploadPost -> {
                 uploadFile(event.file, event.text, event.userName)
             }
+            is HomePageEvent.Logout -> {
+                viewModelScope.launch {
+                    val logoutVal = repo.logout()
+                    _homeStateFlow.value = _homeStateFlow.value.copy(
+                        logout = logoutVal
+                    )
+                }
+            }
         }
     }
 
@@ -50,6 +57,10 @@ class HomeViewModel @Inject constructor(private val repo: HomeRepository) : View
             viewModelScope.launch {
                 repo.uploadPost(Post(text, imageStr, userName))
             }
+            return@let
+        }
+        viewModelScope.launch {
+            repo.uploadPost(Post(text, null, userName))
         }
     }
 

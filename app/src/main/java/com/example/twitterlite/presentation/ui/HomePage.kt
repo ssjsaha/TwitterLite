@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 
@@ -49,6 +50,15 @@ fun HomePage(
     navController: NavController
 ) {
     val homeState = state.collectAsState()
+    if (homeState.value.logout) {
+        LaunchedEffect(key1 = true) {
+            navController.navigate("auth") {
+                popUpTo("home") {
+                    inclusive = true
+                }
+            }
+        }
+    }
     val context = LocalContext.current
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
@@ -73,11 +83,7 @@ fun HomePage(
                 title = { Text(text = "Twitter Lite") },
                 actions = {
                     Text(text = "Logout", Modifier.clickable {
-                        navController.navigate("auth") {
-                            popUpTo("home") {
-                                inclusive = true
-                            }
-                        }
+                        onEvent.invoke(HomePageEvent.Logout)
                     })
                 }
             )
@@ -93,17 +99,20 @@ fun HomePage(
             }
         }, modifier = Modifier.padding(16.dp)
     ) {
-        if(homeState.value.loading) {
-            Column(modifier = Modifier.fillMaxSize(),
+        if (homeState.value.loading) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CircularProgressIndicator(
-                    modifier = Modifier.height(30.dp).width(30.dp),
+                    modifier = Modifier
+                        .height(30.dp)
+                        .width(30.dp),
                     color = Color.Green
                 )
             }
-        }else {
+        } else {
             Column(
                 modifier = Modifier.padding(it)
             ) {

@@ -51,6 +51,7 @@ fun SinglePost(post: PostUI) {
                 .height(32.dp)
                 .width(16.dp))
         }
+        Text(text = post.text)
         val bitmap = post.image
         bitmap?.let {
             Image(

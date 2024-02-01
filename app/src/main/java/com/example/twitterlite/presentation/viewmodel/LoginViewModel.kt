@@ -22,6 +22,10 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
     )
     val loginStateFlow = _loginStateFlow.asStateFlow()
 
+    init {
+        isAlreadyLoggedIn()
+    }
+
     @VisibleForTesting
     fun tryLogin(user: User) {
         viewModelScope.launch {
@@ -69,6 +73,23 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
         }
     }
 
+    private fun isAlreadyLoggedIn() {
+        viewModelScope.launch {
+            repository.isLoginNeeded().collect {
+                _loginStateFlow.value = _loginStateFlow.value.copy(
+                    redirectToHome = !it.isNullOrEmpty()
+                )
+            }
+        }
+
+    }
+
+    private fun saveLoginInfo(email: String) {
+        viewModelScope.launch {
+            repository.saveLoginInfo(email)
+        }
+    }
+
     fun onEvent(event: LoginPageEvent) {
         when (event) {
             is LoginPageEvent.AttemptLogin -> {
@@ -83,6 +104,10 @@ class LoginViewModel @Inject constructor(private val repository: LoginRepository
                     isLoading = true
                 )
                 trySignup(user = event.user)
+            }
+
+            is LoginPageEvent.SaveLoginInfo -> {
+                saveLoginInfo(event.email)
             }
         }
     }

@@ -114,7 +114,8 @@ class HomeViewModelTest {
                 val res = awaitItem()
                 val data = res.posts
                 val error = res.error
-                Truth.assertThat(data).isEqualTo(listOf<PostUI>()) // because homeState.postUi default value is empty list
+                Truth.assertThat(data)
+                    .isEqualTo(listOf<PostUI>()) // because homeState.postUi default value is empty list
                 Truth.assertThat(error).isNotNull()
             }
             verify(spy, times(0)).mapPostUI(listOf(Post("", "", "")))

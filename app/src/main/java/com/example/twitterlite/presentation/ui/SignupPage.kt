@@ -190,6 +190,7 @@ fun SignupPage(
 
             // Demo: Display a message when the login is successful
             if (loginState.value.isLoggedIn && loginState.value.error.isEmpty()) {
+                onEvent.invoke(LoginPageEvent.SaveLoginInfo(email))
                 val text = stringResource(id = R.string.login_success_message)
                 LaunchedEffect(key1 = true) {
                     scope.launch {
